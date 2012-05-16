@@ -1,0 +1,7 @@
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\SonicB34T5.exe.config
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\SonicB34T5.exe
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\SonicB34T5.pdb
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\SonicB34T5.exe
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\SonicB34T5.pdb
