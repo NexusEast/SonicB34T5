@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Windows.Forms;
 
 namespace SonicB34T5
 {
@@ -18,7 +19,8 @@ namespace SonicB34T5
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        Model mdl;
+        NxContentLoader mLoader;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -46,7 +48,9 @@ namespace SonicB34T5
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            //MessageBox.Show(Environment.CurrentDirectory);
+            mLoader = new NxContentLoader(this);
+            mdl = mLoader.LoadModel(Environment.CurrentDirectory + "\\dp.fbx");
             // TODO: use this.Content to load your game content here
         }
 
@@ -67,7 +71,10 @@ namespace SonicB34T5
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back ==
+                Microsoft.Xna.Framework.Input.ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape)
+                )
                 this.Exit();
 
             // TODO: Add your update logic here
