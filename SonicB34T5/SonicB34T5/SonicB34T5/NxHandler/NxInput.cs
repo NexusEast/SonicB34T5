@@ -40,6 +40,7 @@ namespace SonicB34T5
 
         public void UpdateMouse()
         {
+            
              currentState = Mouse.GetState();
             if (currentState != originalMouseState)
             {

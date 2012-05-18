@@ -79,9 +79,11 @@
     <Compile Include="NxHandler\NxCamera.cs" />
     <Compile Include="NxHandler\NxContentBuilder.cs" />
     <Compile Include="NxHandler\NxContentLoader.cs" />
+    <Compile Include="NxHandler\NxDebug.cs" />
     <Compile Include="NxHandler\NxEntity.cs" />
     <Compile Include="NxHandler\NxErrorLogger.cs" />
     <Compile Include="NxHandler\NxInput.cs" />
+    <Compile Include="NxHandler\NxOBB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
