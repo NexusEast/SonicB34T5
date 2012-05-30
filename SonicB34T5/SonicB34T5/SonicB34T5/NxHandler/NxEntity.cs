@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace SonicB34T5
 {
@@ -16,18 +17,63 @@ namespace SonicB34T5
     }
     class NxEntity
     {
-       public   Model mModel;
-       public Vector3 mPos;
-       public Vector3 mScale;
-       public NxAngle mAngle;
-       private  Matrix mWorld;
-       public Matrix mWorldMat;
-       public NxCamera mCam;
-       public NxOBB mOBB;
-       public BoundingBox mBoundingBox; 
-        public NxEntity(Model m,NxCamera cam)
-       {
-        
+        public Model mModel;
+        public Vector3 mPos;
+        public Vector3 mScale;
+        public NxAngle mAngle;
+        private Matrix mWorld;
+        public Matrix mWorldMat;
+        public NxCamera mCam;
+        public NxOBB mOBB;
+        public BoundingBox mBoundingBox;
+        static bool mDOFEnabled = true;
+        public BasicEffect mBasicEffect = null;
+        //static 
+
+        private Rectangle DrawQuad;
+        public Texture2D mTexture;
+        #region MotionBlurFeild
+        protected static Effect mMotionBlurEffect = null;
+        static bool mMotionBlurEnabled = true;
+        private Matrix
+            mWorldViewProj,
+            mWorldViewProjLast;
+        private RenderTarget2D
+            mRTColor,
+            mRTVelocity,
+            mRTVelocityLast;
+        #endregion
+
+
+        public string debugMsg;
+
+        private void InitMotionBlurRTs(GraphicsDevice g)
+        {
+            mRTColor = new RenderTarget2D(g, g.Viewport.Width, g.Viewport.Height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            mRTVelocity =
+                new RenderTarget2D(g, g.Viewport.Width, g.Viewport.Height, false, SurfaceFormat.HalfVector2, DepthFormat.None);
+            mRTVelocityLast =
+                new RenderTarget2D(g, g.Viewport.Width, g.Viewport.Height, false, SurfaceFormat.HalfVector2, DepthFormat.None);
+       
+        }
+
+
+
+
+
+
+
+        public NxEntity(Model m, NxCamera cam,
+            ContentManager c, GraphicsDevice g,
+            Texture2D Texture)
+        {
+            mTexture = Texture;
+            InitMotionBlurRTs(g);
+            DrawQuad = new Rectangle(0,0,mRTColor.Width,mRTColor.Height);
+            if (mBasicEffect == null)
+                mBasicEffect = new BasicEffect(g);
+            if (mMotionBlurEffect == null)
+                mMotionBlurEffect = c.Load<Effect>("PixelMotionBlurNoMRT");
             mScale = Vector3.One;
             mCam = cam;
             mModel = m;
@@ -39,29 +85,36 @@ namespace SonicB34T5
             mModel.CopyAbsoluteBoneTransformsTo(transforms);
             foreach (ModelMesh mesh in mModel.Meshes)
             {
-                 
+
                 foreach (BasicEffect effect in mesh.Effects)
-                { 
+                {
                     effect.World = transforms[mesh.ParentBone.Index] * mWorld;
-                    mWorldMat = effect.World; 
+                    mWorldMat = effect.World;
                 }
-              
+
             }
 
             mBoundingBox = UpdateBoundingBox();
             mOBB = UpdateOBB();
+
+            Viewport viewport = g.Viewport;
+
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
+            Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
+
+            mMotionBlurEffect.Parameters["MatrixTransform"].SetValue(halfPixelOffset * projection); 
         }
 
         public NxOBB UpdateOBB()
         {
-            Quaternion a = Quaternion.CreateFromAxisAngle(Vector3.Up,MathHelper.ToRadians( mAngle.pan));
-            a *= Quaternion.CreateFromAxisAngle(Vector3.Right,MathHelper.ToRadians( mAngle.tilt));
-            a *= Quaternion.CreateFromAxisAngle(Vector3.Forward,MathHelper.ToRadians( mAngle.roll));
+            Quaternion a = Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(mAngle.pan));
+            a *= Quaternion.CreateFromAxisAngle(Vector3.Right, MathHelper.ToRadians(mAngle.tilt));
+            a *= Quaternion.CreateFromAxisAngle(Vector3.Forward, MathHelper.ToRadians(mAngle.roll));
 
-            return  mOBB = new NxOBB(mPos,mBoundingBox.Max,a);
+            return mOBB = new NxOBB(mPos, mBoundingBox.Max, a);
         }
 
-        
+
 
         public BoundingBox UpdateBoundingBox()
         {
@@ -100,10 +153,10 @@ namespace SonicB34T5
             return mBoundingBox = new BoundingBox(min, max);
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch s, GraphicsDevice g)
         {
-          //  mDebugVec3 = Matrix.
-
+            g.SamplerStates[0] = SamplerState.PointClamp;
+            g.SamplerStates[1] = SamplerState.PointClamp;
             // Copy any parent transforms.
             mWorld = Matrix.CreateRotationX(MathHelper.ToRadians(mAngle.tilt))
                         * Matrix.CreateRotationY(MathHelper.ToRadians(mAngle.pan))
@@ -111,7 +164,7 @@ namespace SonicB34T5
                         * Matrix.CreateTranslation(mPos);
             Matrix[] transforms = new Matrix[mModel.Bones.Count];
             mModel.CopyAbsoluteBoneTransformsTo(transforms);
-
+            /*
             // Draw the model. A model can have multiple meshes, so loop.
             foreach (ModelMesh mesh in mModel.Meshes)
             {
@@ -119,7 +172,8 @@ namespace SonicB34T5
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = transforms[mesh.ParentBone.Index]*mWorld;
+                    
+                    effect.World = transforms[mesh.ParentBone.Index] * mWorld;
                     mWorldMat = effect.World;
                     effect.View = mCam.mView;
                     effect.Projection = mCam.mProjection;
@@ -127,7 +181,70 @@ namespace SonicB34T5
                 // Draw the mesh, using the effects set above.
                 mesh.Draw();
             }
+            */
+
+            if (mMotionBlurEnabled)
+            {
+
+                mBasicEffect.View = mCam.mView;
+                mBasicEffect.World = mWorldMat;
+                mBasicEffect.Projection = mCam.mProjection;
+
+                g.SetRenderTarget(mRTColor);
+                g.Clear(Color.Blue);
+                foreach (ModelMesh m in mModel.Meshes)
+                {
+                    foreach (ModelMeshPart mp in m.MeshParts)
+                    {
+                        mBasicEffect.TextureEnabled = true;
+                        mBasicEffect.Texture = mTexture;
+                        mBasicEffect.World = transforms[m.ParentBone.Index] * mWorld;
+                        mWorldMat = mBasicEffect.World;
+                        mBasicEffect.LightingEnabled = true;
+
+                        mp.Effect = mBasicEffect;
+
+                    }
+                    m.Draw();
+                }
+            }
+
+            g.SetRenderTarget(null);
+            mWorldViewProjLast = mWorldViewProj;
+            mWorldViewProj = mWorldMat * mCam.mView * mCam.mProjection;
+            mRTVelocityLast = mRTVelocity;
+            g.SetRenderTarget(mRTVelocity);
+            g.Clear(Color.Blue);
+                    mMotionBlurEffect.Parameters["mWorld"].SetValue(mWorldMat);
+                    mMotionBlurEffect.Parameters["mWorldViewProjection"].SetValue(mWorldViewProj);
+                    mMotionBlurEffect.Parameters["mWorldViewProjectionLast"].SetValue(mWorldViewProjLast);
+                    mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["WorldWithVelocity"];
+            foreach (ModelMesh m in mModel.Meshes)
+            {
+                foreach (ModelMeshPart mp in m.MeshParts)
+                {
+                    mp.Effect = mMotionBlurEffect;
+
+                }
+                m.Draw();
+            }
+            g.SetRenderTarget(null);
+
+            mMotionBlurEffect.Parameters["CurFrameVelocityTexture"].SetValue(mRTVelocity);
+            mMotionBlurEffect.Parameters["LastFrameVelocityTexture"].SetValue(mRTVelocityLast);
+            mMotionBlurEffect.Parameters["RenderTargetTexture"].SetValue(mRTColor);
+           
+            mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["PostProcessMotionBlur_2_0"];
+            s.Begin(SpriteSortMode.Texture, BlendState.Opaque, SamplerState.AnisotropicClamp ,
+                DepthStencilState.Default, RasterizerState.CullCounterClockwise, mMotionBlurEffect);
+            s.Draw((Texture2D)mRTColor, DrawQuad, Color.White);
+            s.End();
             
+            // s.Begin();
+            // s.Draw(mRTColor, new Rectangle(0, 0, 200, 120), Color.White);
+            //s.End();
+
+
             /*
             Matrix[] transforms = new Matrix[mModel.Bones.Count];
             mModel.CopyAbsoluteBoneTransformsTo(transforms);

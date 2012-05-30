@@ -8,7 +8,7 @@
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
       <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\SpriteFont1.xnb</Output>
-      <Time>2012-05-17T17:32:37.859375+08:00</Time>
+      <Time>2012-05-19T01:39:53.03575+08:00</Time>
     </Item>
     <Item>
       <Source>cent.FBX</Source>
@@ -29,6 +29,42 @@
       <Options>IntermediateFile, DontCacheImportedData</Options>
       <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\cent_0.xml</Output>
       <Time>2012-05-18T23:27:38.192+08:00</Time>
+    </Item>
+    <Item>
+      <Source>Effect1.fx</Source>
+      <Name>Effect1</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\Effect1.xnb</Output>
+      <Time>2012-05-28T19:40:24.78125+08:00</Time>
+    </Item>
+    <Item>
+      <Source>PixelMotionBlur.fx</Source>
+      <Name>PixelMotionBlur</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\PixelMotionBlur.xnb</Output>
+      <Time>2012-05-28T19:22:15.1875+08:00</Time>
+    </Item>
+    <Item>
+      <Source>PixelMotionBlurNoMRT.fx</Source>
+      <Name>PixelMotionBlurNoMRT</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\PixelMotionBlurNoMRT.xnb</Output>
+      <Time>2012-05-31T01:28:19.046875+08:00</Time>
+    </Item>
+    <Item>
+      <Source>10220.jpg</Source>
+      <Name>10220</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\10220.xnb</Output>
+      <Time>2012-05-28T19:43:02.859375+08:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>

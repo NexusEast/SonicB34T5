@@ -27,7 +27,10 @@ namespace SonicB34T5
         NxInput nInput;
         SpriteFont myFont;
         NxDebugDraw nDebug;
-        BoundingBox b;
+        Effect ef;
+        Effect basiceff; BasicEffect ba;
+
+        Texture2D tex;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -57,13 +60,17 @@ namespace SonicB34T5
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //MessageBox.Show(Environment.CurrentDirectory);
             mLoader = new NxContentLoader(this);//Content.Load<Model>("cent");
-            mdl =   mLoader.LoadModel(Environment.CurrentDirectory + "\\cent2.fbx");
+            mdl =   mLoader.LoadModel(Environment.CurrentDirectory + "\\obo.fbx");
             cam = new NxCamera(GraphicsDevice.Viewport, new Vector3(0, 0, -500), Vector3.Zero, NxCamera.CameraType.Targeted);
-            mEnt = new NxEntity(mdl, cam);
+            
             nInput = new NxInput(GraphicsDevice.Viewport);
             myFont = Content.Load<SpriteFont>("SpriteFont1");
             nDebug = new NxDebugDraw(GraphicsDevice);
-             
+            ef = Content.Load<Effect>("PixelMotionBlurNoMRT");
+            basiceff = Content.Load<Effect>("Effect1");
+            tex = Content.Load<Texture2D>("10220");
+            ba = new BasicEffect(GraphicsDevice);
+            mEnt = new NxEntity(mdl, cam,Content,GraphicsDevice,tex);
             // TODO: use this.Content to load your game content here
         }
 
@@ -134,21 +141,76 @@ namespace SonicB34T5
             
             mEnt.mAngle.pan += 1;
             mEnt.mAngle.tilt += 1;
+          /*    Matrix mWorld = Matrix.CreateRotationX(MathHelper.ToRadians(mEnt.mAngle.tilt))
+                       * Matrix.CreateRotationY(MathHelper.ToRadians(mEnt.mAngle.pan))
+                       * Matrix.CreateRotationZ(MathHelper.ToRadians(mEnt.mAngle.roll))
+                       * Matrix.CreateTranslation(mEnt.mPos);
+            Matrix[] transforms = new Matrix[mEnt.mModel.Bones.Count];
+            mEnt.mModel.CopyAbsoluteBoneTransformsTo(transforms);
+              
+            foreach (ModelMesh mesh in mEnt.mModel.Meshes)
+            {
+                // This is where the mesh orientation is set, as well as our camera and projection.
+                foreach (BasicEffect effect in(mesh.Effects))  
+                { 
+                   // effect.
+                    effect.EnableDefaultLighting();
+
+                    effect.World = transforms[mesh.ParentBone.Index] *  mWorld;
+                   // mWorldMat = effect.World;
+                    effect.View = cam.mView;
+                    effect.Projection = cam.mProjection;
+                }
+                // Draw the mesh, using the effects set above.
+                mesh.Draw();
+            }
+              
+            
+             basiceff.Parameters["WorldViewProj"].SetValue(mWorld* cam.mView*cam.mProjection);
+             basiceff.Parameters["UserTexture"].SetValue(tex);
+            
+           // ef.Parameters["mWorld"].SetValue(mWorld);
+          // ef.Parameters["mWorldViewProjection"].SetValue(mWorld* cam.mView*cam.mProjection);
+
+             ;
+            foreach (ModelMesh m in mEnt.mModel.Meshes)
+            {
+                foreach (ModelMeshPart mp in m.MeshParts )
+                {
+                    mp.Effect = basiceff;
+                    
+                }
+                m.Draw();
+            }
+
+
+          
             mEnt.Draw();
             nDebug.Begin(cam.mView, cam.mProjection);
-            nDebug.DrawWireBox(mEnt.mOBB, Color.Black);
+            nDebug.DrawWireBox(mEnt.mOBB, Color.Black); 
+            nDebug.DrawWireGrid(Vector3.UnitX * 6000, Vector3.UnitZ * 6000, new Vector3(-3000, 0, -3000), 100, 100, Color.Gray);
+            nDebug.DrawRay(new Ray(Vector3.Zero, Vector3.Up * 3000), Color.Blue, 1);//X AXIS
+            nDebug.DrawRay(new Ray(Vector3.Zero, Vector3.Right * 3000), Color.Green, 1);//Y AXIS
+            nDebug.DrawRay(new Ray(Vector3.Zero, Vector3.Forward * 3000), Color.Yellow, 1);//Z AXIS
             //nDebug.DrawWireBox(mEnt.mBoundingBox, Color.Yellow);
             nDebug.End();
 
             // NxDebugShapeRenderer.AddBoundingSphere(mEnt.mModel.Meshes[0].BoundingSphere, Color.Red);
             // NxDebugShapeRenderer.AddBoundingBox(b, Color.GreenYellow);
             // NxDebugShapeRenderer.Draw(gameTime, cam.mView, cam.mProjection);
+            */
 
-
-            spriteBatch.Begin();
-            spriteBatch.DrawString(myFont, mEnt.mBoundingBox.ToString(), Vector2.Zero, Color.Red);
+            
+            mEnt.Draw(spriteBatch,GraphicsDevice);
+           
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Opaque);
+            spriteBatch.DrawString(myFont, GraphicsDevice.GraphicsDeviceStatus.ToString(), Vector2.Zero, Color.Red);
+         //   spriteBatch.Draw((Texture2D)GraphicsDevice.Textures[0], new Rectangle(0, 0, 100, 100), Color.White);
             spriteBatch.End();
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+          //  GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+           // GraphicsDevice.BlendState = BlendState.Opaque;
+           // GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
+          //  GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);

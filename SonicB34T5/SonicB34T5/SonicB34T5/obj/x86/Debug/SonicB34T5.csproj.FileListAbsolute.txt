@@ -7,3 +7,7 @@ E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\SonicB34T5.exe
 E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\obj\x86\Debug\SonicB34T5.pdb
 E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\SpriteFont1.xnb
 E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\cent.xnb
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\Effect1.xnb
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\PixelMotionBlur.xnb
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\PixelMotionBlurNoMRT.xnb
+E:\Projects\Csharp\SonicB34T5\SonicB34T5\SonicB34T5\bin\x86\Debug\Content\10220.xnb
