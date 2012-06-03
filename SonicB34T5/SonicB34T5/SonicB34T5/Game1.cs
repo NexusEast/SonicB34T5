@@ -203,10 +203,10 @@ namespace SonicB34T5
             
             mEnt.Draw(spriteBatch,GraphicsDevice);
            
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Opaque);
-            spriteBatch.DrawString(myFont, GraphicsDevice.GraphicsDeviceStatus.ToString(), Vector2.Zero, Color.Red);
+            //spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Opaque);
+           // spriteBatch.DrawString(myFont, GraphicsDevice.GraphicsDeviceStatus.ToString(), Vector2.Zero, Color.Red);
          //   spriteBatch.Draw((Texture2D)GraphicsDevice.Textures[0], new Rectangle(0, 0, 100, 100), Color.White);
-            spriteBatch.End();
+           // spriteBatch.End();
           //  GraphicsDevice.DepthStencilState = DepthStencilState.Default;
            // GraphicsDevice.BlendState = BlendState.Opaque;
            // GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;

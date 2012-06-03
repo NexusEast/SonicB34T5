@@ -45,7 +45,25 @@ namespace SonicB34T5
         #endregion
 
 
+        private EffectParameter mMotionBlurWorldMat;
+        private EffectParameter mMotionBlurMatrixTransform;
+        private EffectParameter mMotionBlurWorldViewProjection;
+        private EffectParameter mMotionBlurWorldViewProjectionLast;
+        private EffectParameter mMotionBlurCurFrameVelocityTexture;
+        private EffectParameter mMotionBlurLastFrameVelocityTexture;
+        private EffectParameter mMotionBlurRenderTargetTexture;
         public string debugMsg;
+
+        private void InitMotionParams()
+        {
+            mMotionBlurWorldMat = mMotionBlurEffect.Parameters["mWorld"];
+            mMotionBlurMatrixTransform = mMotionBlurEffect.Parameters["MatrixTransform"];
+            mMotionBlurWorldViewProjection = mMotionBlurEffect.Parameters["mWorldViewProjection"];
+            mMotionBlurWorldViewProjectionLast = mMotionBlurEffect.Parameters["mWorldViewProjectionLast"];
+            mMotionBlurCurFrameVelocityTexture = mMotionBlurEffect.Parameters["CurFrameVelocityTexture"];
+            mMotionBlurLastFrameVelocityTexture = mMotionBlurEffect.Parameters["LastFrameVelocityTexture"];
+            mMotionBlurRenderTargetTexture = mMotionBlurEffect.Parameters["RenderTargetTexture"];
+        }
 
         private void InitMotionBlurRTs(GraphicsDevice g)
         {
@@ -54,7 +72,7 @@ namespace SonicB34T5
                 new RenderTarget2D(g, g.Viewport.Width, g.Viewport.Height, false, SurfaceFormat.HalfVector2, DepthFormat.None);
             mRTVelocityLast =
                 new RenderTarget2D(g, g.Viewport.Width, g.Viewport.Height, false, SurfaceFormat.HalfVector2, DepthFormat.None);
-       
+
         }
 
 
@@ -69,11 +87,13 @@ namespace SonicB34T5
         {
             mTexture = Texture;
             InitMotionBlurRTs(g);
-            DrawQuad = new Rectangle(0,0,mRTColor.Width,mRTColor.Height);
+
+            DrawQuad = new Rectangle(0, 0, mRTColor.Width, mRTColor.Height);
             if (mBasicEffect == null)
                 mBasicEffect = new BasicEffect(g);
             if (mMotionBlurEffect == null)
                 mMotionBlurEffect = c.Load<Effect>("PixelMotionBlurNoMRT");
+            InitMotionParams();
             mScale = Vector3.One;
             mCam = cam;
             mModel = m;
@@ -101,8 +121,7 @@ namespace SonicB34T5
 
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
             Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
-
-            mMotionBlurEffect.Parameters["MatrixTransform"].SetValue(halfPixelOffset * projection); 
+            mMotionBlurMatrixTransform.SetValue(halfPixelOffset * projection);
         }
 
         public NxOBB UpdateOBB()
@@ -215,10 +234,10 @@ namespace SonicB34T5
             mRTVelocityLast = mRTVelocity;
             g.SetRenderTarget(mRTVelocity);
             g.Clear(Color.Blue);
-                    mMotionBlurEffect.Parameters["mWorld"].SetValue(mWorldMat);
-                    mMotionBlurEffect.Parameters["mWorldViewProjection"].SetValue(mWorldViewProj);
-                    mMotionBlurEffect.Parameters["mWorldViewProjectionLast"].SetValue(mWorldViewProjLast);
-                    mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["WorldWithVelocity"];
+            mMotionBlurWorldMat.SetValue(mWorldMat);
+            mMotionBlurWorldViewProjection.SetValue(mWorldViewProj);
+            mMotionBlurWorldViewProjectionLast.SetValue(mWorldViewProjLast);
+            mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["WorldWithVelocity"];
             foreach (ModelMesh m in mModel.Meshes)
             {
                 foreach (ModelMeshPart mp in m.MeshParts)
@@ -229,17 +248,16 @@ namespace SonicB34T5
                 m.Draw();
             }
             g.SetRenderTarget(null);
+            mMotionBlurCurFrameVelocityTexture.SetValue(mRTVelocity);
+            mMotionBlurLastFrameVelocityTexture.SetValue(mRTVelocityLast);
 
-            mMotionBlurEffect.Parameters["CurFrameVelocityTexture"].SetValue(mRTVelocity);
-            mMotionBlurEffect.Parameters["LastFrameVelocityTexture"].SetValue(mRTVelocityLast);
-            mMotionBlurEffect.Parameters["RenderTargetTexture"].SetValue(mRTColor);
-           
-            mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["PostProcessMotionBlur_2_0"];
-            s.Begin(SpriteSortMode.Texture, BlendState.Opaque, SamplerState.AnisotropicClamp ,
+            mMotionBlurEffect.CurrentTechnique = mMotionBlurEffect.Techniques["PostProcessMotionBlur_3_0"];
+            s.Begin(SpriteSortMode.Texture, BlendState.Opaque, SamplerState.AnisotropicClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise, mMotionBlurEffect);
             s.Draw((Texture2D)mRTColor, DrawQuad, Color.White);
             s.End();
-            
+
+
             // s.Begin();
             // s.Draw(mRTColor, new Rectangle(0, 0, 200, 120), Color.White);
             //s.End();
